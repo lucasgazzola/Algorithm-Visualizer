@@ -14,6 +14,10 @@ from src.classes import Prim, Dijkstra
 
 algorithms = ["dijkstra", "flujo-maximo", "prim"]
 
+# Si no existe la carpeta frontend/dist, la creamos
+if not os.path.exists("frontend/dist"):
+    os.makedirs("frontend/dist")
+
 app = FastAPI()
 
 app.add_middleware(
@@ -102,6 +106,7 @@ app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 if __name__ == "__main__":
     try:
+
         subprocess.run(
             ["pip", "install", "-r", "requirements.txt"], check=True)
         subprocess.run(["npm", "install"], cwd="frontend", check=True)
