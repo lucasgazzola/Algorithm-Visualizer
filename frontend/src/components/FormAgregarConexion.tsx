@@ -120,14 +120,14 @@ export default function FormAgregarConexion({
 
       <div className="flex gap-4">
         <button
-          className="bg-red-500 h-10 px-2 rounded-sm flex items-center justify-center self-center"
+          className="hover:bg-red-800 active:bg-red-900 bg-red-600 h-10 px-2 rounded-sm flex items-center justify-center self-center"
           type="button"
           onClick={() => setAgregando(false)}>
           <span className="text-xl font-bold">Cerrar</span>
         </button>
 
         <button
-          className="bg-green-600 rounded-sm flex items-center justify-center self-center w-10 h-10"
+          className="hover:bg-green-800 active:bg-green-900 bg-green-600 rounded-sm flex items-center justify-center self-center w-10 h-10"
           type="submit">
           <span className="text-xl font-bold">+</span>
         </button>

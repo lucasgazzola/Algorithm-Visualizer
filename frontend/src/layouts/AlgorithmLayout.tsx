@@ -17,8 +17,10 @@ export default function AlgorithmLayout({
           <BackArrow />
         </Link>
         <h1>
-          <span className="font-bold text-xl text-cyan-400">Algoritmo:</span>{' '}
-          <span className="font-bold text-lg text-cyan-50">{name}</span>
+          <span className="font-bold text-2xl text-blue-800">Algoritmo:</span>{' '}
+          <span className="font-bold text-xl underline underline-offset-2 text-cyan-950 dark:text-cyan-50">
+            {name}
+          </span>
         </h1>
       </header>
       {children}

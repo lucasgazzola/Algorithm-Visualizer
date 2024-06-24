@@ -48,8 +48,11 @@ export default function Prim() {
 
   return (
     <div className="flex flex-col items-center flex-1">
-      <h1 className="text-3xl">Prim</h1>
-      <ul className="pt-5 flex flex-col gap-2 mb-4">
+      <h1 className="text-4xl mb-2 font-bold text-blue-800 dark:text-cyan-200">
+        PRIM
+      </h1>
+      <span className="text-lg underline font-bold">Conexiones:</span>
+      <ul className="flex flex-col gap-2 py-2">
         {conexiones.length > 0 &&
           conexiones.map(conexion => (
             <li key={`${conexion[0]}-${conexion[1]}-${conexion[2]}`}>
@@ -65,7 +68,7 @@ export default function Prim() {
                     )
                   }
                   type="button"
-                  className="bg-red-500 px-1 ml-3">
+                  className="hover:bg-red-800 active:bg-red-900 bg-red-600 rounded-sm text-white font-bold px-1 ml-3">
                   x
                 </button>
               </span>
@@ -82,7 +85,7 @@ export default function Prim() {
       {!agregando && (
         <button
           onClick={handleAgregarConexion}
-          className="p-2 text-xl font-bold bg-blue-400"
+          className="p-2 text-xl font-bold hover:bg-blue-800 active:bg-blue-900 bg-blue-600"
           type="button">
           <span>Nueva</span>
         </button>
@@ -130,13 +133,13 @@ export default function Prim() {
       <div className="mt-auto flex flex-col gap-2">
         <button
           onClick={() => setConexiones([])}
-          className="p-2 text-xl font-bold hover:bg-red-400 active:bg-red-800 bg-red-600"
+          className="p-2 text-xl font-bold hover:bg-red-800 active:bg-red-900 bg-red-600"
           type="button">
           <span>Borrar Conexiones</span>
         </button>
         <button
           onClick={handleCalcular}
-          className="p-2 text-xl font-bold hover:bg-green-400 active:bg-green-800 bg-green-600"
+          className="p-2 text-xl font-bold hover:bg-green-800 active:bg-green-900 bg-green-600"
           type="button">
           <span>Calcular</span>
         </button>

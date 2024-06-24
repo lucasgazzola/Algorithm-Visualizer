@@ -2,30 +2,8 @@ import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
-
+from collections import defaultdict, deque
 from src.classes import Prim, Dijkstra
-
-
-def dijkstra(G, start):
-    distances = {v: float('infinity') for v in G.vertices()}
-    distances[start] = 0
-    parents = {v: None for v in G.vertices()}
-    visited = set()
-
-    while len(visited) < len(G.vertices()):
-        current = min((v for v in G.vertices() if v not in visited),
-                      key=lambda x: distances[x])
-        visited.add(current)
-
-        for neighbor in G.adyacentes(current):
-            if neighbor not in visited:
-                weight = next(w for (v_ini, v_fin, w) in G.aristas()
-                              if v_ini == current and v_fin == neighbor)
-                if distances[current] + weight < distances[neighbor]:
-                    distances[neighbor] = distances[current] + weight
-                    parents[neighbor] = current
-
-    return distances, parents
 
 
 def max_flow(graph, start, end):
@@ -151,109 +129,131 @@ def draw_prim(G, mst=None, filename="graph.png"):
     plt.clf()
 
 
-def draw_dijkstra(G, path, filename="graph.png", layout="spring"):
+def dijkstra(G, start, end):
+    dist = {v: float('inf') for v in G.vertices()}
+    prev = {v: None for v in G.vertices()}
+    dist[start] = 0
+    priority_queue = [(0, start)]
+
+    while priority_queue:
+        current_dist, u = heapq.heappop(priority_queue)
+
+        if u == end:
+            break
+
+        for v in G.adyacentes(u):
+            e = (u, v)
+            weight = G.pesos()[e]
+            distance = int(current_dist) + int(weight)
+
+            if distance < dist[v]:
+                dist[v] = distance
+                prev[v] = u
+                heapq.heappush(priority_queue, (distance, v))
+
+    # Reconstruir el camino
+    path = deque()
+    u = end
+    if prev[u] or u == start:
+        while u:
+            path.appendleft(u)
+            u = prev[u]
+
+    return dist, list(path)
+
+
+# def draw_dijkstra(G, path=None, filename="dijkstra.png"):
+#     """
+#     Dibuja el grafo G y resalta en rojo las aristas del camino más corto (si se proporciona).
+
+#     :param G: Instancia de la clase Grafo.
+#     :param path: Lista de nodos que representa el camino más corto. (Opcional)
+#     """
+#     graph_nx = nx.DiGraph()
+#     filename = "dijkstra.png"
+
+#     # Añadir vértices y aristas al grafo de networkx
+#     for v in G.vertices():
+#         graph_nx.add_node(v)
+#     for e in G.aristas():
+#         v, w = e
+#         graph_nx.add_edge(v, w, weight=G.pesos()[e])
+
+#     pos = nx.spring_layout(graph_nx)
+
+#     # Dibujar todos los nodos y aristas del grafo original
+#     nx.draw_networkx_nodes(graph_nx, pos, node_size=700,
+#                            node_color="lightblue")
+#     nx.draw_networkx_labels(graph_nx, pos)
+#     nx.draw_networkx_edges(graph_nx, pos, edgelist=graph_nx.edges(), width=2)
+
+#     # Resaltar las aristas del camino más corto en rojo, si se proporciona
+#     if path:
+#         path_edges = [(path[i], path[i+1]) for i in range(len(path) - 1)]
+#         nx.draw_networkx_edges(
+#             graph_nx, pos, edgelist=path_edges, width=2, edge_color="red")
+
+#     # Mostrar pesos de las aristas
+#     edge_labels = nx.get_edge_attributes(graph_nx, 'weight')
+#     nx.draw_networkx_edge_labels(graph_nx, pos, edge_labels=edge_labels)
+
+#     plt.title("Grafo con el camino más corto resaltado en rojo")
+#     plt.savefig(filename)
+
+#     # Mostrar el grafo en una nueva ventana
+#     # plt.show()
+
+#     plt.clf()
+
+def draw_dijkstra(G, path=None, distance=None, start=None, end=None, filename="dijkstra.png"):
     """
-    Dibuja el grafo G y resalta en verde las aristas del camino más corto proporcionado.
+    Dibuja el grafo G y resalta en rojo las aristas del camino más corto (si se proporciona).
 
     :param G: Instancia de la clase Grafo.
-    :param path: Lista de nodos que representan el camino más corto.
-    :param filename: Nombre del archivo donde se guardará la imagen del grafo.
-    :param layout: Layout para distribuir los nodos (default: spring).
+    :param path: Lista de nodos que representa el camino más corto. (Opcional)
+    :param distance: Distancia total del camino más corto. (Opcional)
+    :param start: Nodo de inicio del camino más corto. (Opcional)
+    :param end: Nodo final del camino más corto. (Opcional)
     """
-    graph_nx = nx.DiGraph()  # Crear un grafo dirigido
+    graph_nx = nx.DiGraph()
+    filename = "dijkstra.png"
 
     # Añadir vértices y aristas al grafo de networkx
     for v in G.vertices():
         graph_nx.add_node(v)
     for e in G.aristas():
-        # Asegúrate de que e es una tupla o lista con exactamente dos elementos
-        if len(e) != 2:
-            raise ValueError(
-                "Una arista debe ser un 2-subconjunto de vértices.")
-
-        v, w = e  # Desempaquetar la arista en v y w
+        v, w = e
         graph_nx.add_edge(v, w, weight=G.pesos()[e])
 
-    # Usar el layout seleccionado
-    if layout == "spring":
-        pos = nx.spring_layout(graph_nx, seed=42)
-    elif layout == "kamada_kawai":
-        pos = nx.kamada_kawai_layout(graph_nx)
-    elif layout == "shell":
-        pos = nx.shell_layout(graph_nx)
-    elif layout == "spectral":
-        pos = nx.spectral_layout(graph_nx)
-    elif layout == "circular":
-        pos = nx.circular_layout(graph_nx)
-    else:
-        raise ValueError("Layout no reconocido")
+    pos = nx.spring_layout(graph_nx)
 
     # Dibujar todos los nodos y aristas del grafo original
     nx.draw_networkx_nodes(graph_nx, pos, node_size=700,
                            node_color="lightblue")
-    nx.draw_networkx_labels(graph_nx, pos, font_size=12, font_color="black")
+    nx.draw_networkx_labels(graph_nx, pos)
     nx.draw_networkx_edges(graph_nx, pos, edgelist=graph_nx.edges(
-    ), width=2, arrows=True, arrowstyle='-|>', arrowsize=20)
+    ), width=2, arrowstyle='->', arrowsize=20)
 
-    # Resaltar las aristas del camino más corto en verde, si se proporciona
+    # Resaltar las aristas del camino más corto en rojo, si se proporciona
     if path:
-        dijkstra_edges = []
-        for i in range(len(path) - 1):
-            dijkstra_edges.append((path[i], path[i + 1]))
+        path_edges = [(path[i], path[i+1]) for i in range(len(path) - 1)]
         nx.draw_networkx_edges(
-            graph_nx, pos, edgelist=dijkstra_edges, width=2, edge_color="green", arrowstyle='-|>', arrowsize=20)
+            graph_nx, pos, edgelist=path_edges, width=2, edge_color="red", arrowstyle='->', arrowsize=20)
 
     # Mostrar pesos de las aristas
     edge_labels = nx.get_edge_attributes(graph_nx, 'weight')
-    nx.draw_networkx_edge_labels(
-        graph_nx, pos, edge_labels=edge_labels, font_size=10)
+    nx.draw_networkx_edge_labels(graph_nx, pos, edge_labels=edge_labels)
 
-    plt.title("Grafo con camino más corto resaltado en verde")
+    # Añadir información de distancia y camino más corto
+    if distance is not None and start is not None and end is not None:
+        textstr = f"Distancia desde {start} hasta {end}: {
+            distance}\nCamino más corto: {' -> '.join(path)}"
+        plt.gcf().text(0.02, 0.02, textstr, fontsize=12, ha='left')
+
+    plt.title("Grafo con el camino más corto resaltado en rojo")
     plt.savefig(filename)
 
-    # Limpiar el plot para evitar superposiciones en futuras visualizaciones
+    # Mostrar el grafo en una nueva ventana
+    # plt.show()
+
     plt.clf()
-
-
-# def dijkstra(graph, start_vertex):
-#     # Inicialización de distancias, padres y vistos
-#     distances = {vertex: float('infinity') for vertex in graph.vertices()}
-#     parents = {vertex: None for vertex in graph.vertices()}
-#     seen = {vertex: False for vertex in graph.vertices()}
-#     distances[start_vertex] = 0
-
-#     priority_queue = [(0, start_vertex)]
-#     heapq.heapify(priority_queue)
-
-#     while priority_queue:
-#         current_distance, current_vertex = heapq.heappop(priority_queue)
-
-#         if seen[current_vertex]:
-#             continue
-
-#         seen[current_vertex] = True
-
-#         for neighbor in graph.adyacentes(current_vertex):
-#             weight = graph.pesos()[frozenset([current_vertex, neighbor])]
-#             distance = current_distance + weight
-
-#             if not seen[neighbor] and distance < distances[neighbor]:
-#                 distances[neighbor] = distance
-#                 parents[neighbor] = current_vertex
-#                 heapq.heappush(priority_queue, (distance, neighbor))
-
-#     return distances, parents
-
-
-def obtener_camino(padre, nodo_final):
-    """
-    Obtiene el camino más corto desde el nodo fuente hasta el nodo final usando el diccionario de padres.
-    :param padre: Diccionario de padres.
-    :param nodo_final: Nodo final.
-    :return: Lista de nodos que forman el camino más corto.
-    """
-    camino = []
-    while nodo_final is not None:
-        camino.append(nodo_final)
-        nodo_final = padre[nodo_final]
-    return camino[::-1]

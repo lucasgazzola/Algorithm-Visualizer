@@ -1,6 +1,6 @@
 export default function BackArrow() {
   return (
-    <div className="hover:bg-blue-400 active:bg-blue-800 bg-blue-600 opacity-80 h-fit w-fit p-4">
+    <div className="hover:bg-blue-800 active:bg-blue-900 bg-blue-600 opacity-80 h-fit w-fit p-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

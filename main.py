@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from src.utils import prim, dijkstra, draw_dijkstra, draw_prim, obtener_camino
+from src.utils import prim, dijkstra, draw_dijkstra, draw_prim
 from src.classes import Prim, Dijkstra
 
 algorithms = ["dijkstra", "flujo-maximo", "prim"]
@@ -56,6 +56,24 @@ async def prim_algorithm(request: Request):
     return FileResponse(filename_path, media_type="image/png")
 
 
+# @app.post("/dijkstra")
+# async def dijkstra_algorithm(request: Request):
+#     body = await request.json()
+#     conexiones = body.get("conexiones")
+#     start = body.get("start")
+#     end = body.get("end")
+#     filename_path = "dijkstra.png"
+
+#     try:
+#         G = Dijkstra(conexiones=conexiones)
+#         distances, parents = dijkstra(G, start)
+#         camino = obtener_camino(parents, end)
+#         draw_dijkstra(G, path=camino, filename=filename_path,
+#                       layout="circular")
+#         return FileResponse(filename_path, media_type="image/png")
+#     except Exception as e:
+#         print(e)
+
 @app.post("/dijkstra")
 async def dijkstra_algorithm(request: Request):
     body = await request.json()
@@ -64,15 +82,26 @@ async def dijkstra_algorithm(request: Request):
     end = body.get("end")
     filename_path = "dijkstra.png"
 
+    if len(conexiones) == 0:
+        return JSONResponse(content={"message": "Empty graph"}, status_code=400)
+
+    G = Dijkstra(conexiones=conexiones)
     try:
-        G = Dijkstra(conexiones=conexiones)
-        distances, parents = dijkstra(G, start)
-        camino = obtener_camino(parents, end)
-        draw_dijkstra(G, path=camino, filename=filename_path,
-                      layout="circular")
-        return FileResponse(filename_path, media_type="image/png")
-    except Exception as e:
-        print(e)
+        dist, path = dijkstra(G, start, end)
+        print(f"Distancia desde {start} hasta {end}: {dist[end]}")
+        print("Camino más corto:", path)
+        draw_dijkstra(
+            G, path=path, distance=dist[end], start=start, end=end, filename=filename_path)
+        # draw_dijkstra(G, path=path, filename=filename_path)
+    except ValueError as e:
+        draw_dijkstra(G, filename=filename_path)
+        print("Error:", e)
+
+    if not os.path.exists(filename_path):
+        raise HTTPException(
+            status_code=500, detail="Error al crear la imagen.")
+
+    return FileResponse(filename_path, media_type="image/png")
 
 
 @app.get("/prim")
