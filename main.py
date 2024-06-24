@@ -101,13 +101,11 @@ app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 
 if __name__ == "__main__":
-    # Ejecutar "cd frontend && npm run build" antes de iniciar el servidor
     try:
         subprocess.run(
             ["pip", "install", "-r", "requirements.txt"], check=True)
         subprocess.run(["npm", "install"], cwd="frontend", check=True)
         subprocess.run(["npm", "run", "build"], cwd="frontend", check=True)
-
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while building frontend: {e}")
         exit(1)
