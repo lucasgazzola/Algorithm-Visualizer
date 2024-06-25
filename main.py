@@ -30,7 +30,8 @@ app.add_middleware(
 
 # Montar la carpeta frontend/dist para servir contenido estático
 
-app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
+# app.mount("/", StaticFiles(directory="/frontend/dist", html=True), name="static")
+app.mount("/", StaticFiles(directory="/frontend/dist"), name="static")
 
 
 @app.post("/prim")
