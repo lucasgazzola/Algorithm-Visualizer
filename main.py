@@ -134,6 +134,7 @@ app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 
 if __name__ == "__main__":
+    PORT = os.getenv("PORT", 4000)
     try:
         # subprocess.run(
         #     ["pip", "install", "-r", "requirements.txt"], check=True)
@@ -142,4 +143,4 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while building frontend: {e}")
         exit(1)
-    run("main:app", port=4000, log_level="info", reload=True)
+    run("main:app", port=PORT, log_level="info", reload=True)
