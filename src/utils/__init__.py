@@ -246,8 +246,8 @@ def draw_dijkstra(G, path=None, distance=None, start=None, end=None, filename="d
 
     # Añadir información de distancia y camino más corto
     if distance is not None and start is not None and end is not None:
-        textstr = f"Distancia desde {start} hasta {end}: {
-            distance}\nCamino más corto: {' -> '.join(path)}"
+        textstr = f"""Distancia desde {start} hasta {end}: {
+            distance}\nCamino más corto: {' -> '.join(path)}"""
         plt.gcf().text(0.02, 0.02, textstr, fontsize=12, ha='left')
 
     plt.title("Grafo con el camino más corto resaltado en rojo")
