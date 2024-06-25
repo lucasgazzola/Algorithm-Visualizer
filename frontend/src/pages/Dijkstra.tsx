@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import FormAgregarConexion from '../components/FormAgregarConexion'
+import { BASE_URL } from '../constants'
 // {
 //   "conexiones": [
 //     ["A", "B", 10],
@@ -45,7 +46,7 @@ export default function Dijkstra() {
   const handleCalcular = async () => {
     if (!nodoInicial || !nodoFinal) return
     setIsModalOpen(true)
-    const response = await fetch('http://localhost:4000/dijkstra', {
+    const response = await fetch(BASE_URL + '/dijkstra', {
       method: 'POST',
       headers: {
         'Content-Type': 'image/png',

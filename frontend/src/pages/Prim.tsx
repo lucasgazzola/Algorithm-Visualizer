@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import FormAgregarConexion from '../components/FormAgregarConexion'
+import { BASE_URL } from '../constants'
 
 type Conexion = [string, string, number]
 
@@ -28,7 +29,7 @@ export default function Prim() {
 
   const handleCalcular = async () => {
     setIsModalOpen(true)
-    const response = await fetch('http://localhost:4000/prim', {
+    const response = await fetch(BASE_URL + '/prim', {
       method: 'POST',
       headers: {
         'Content-Type': 'image/png',
