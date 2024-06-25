@@ -1,0 +1,8 @@
+{
+    "printWidth": 88,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "pythonParser": "python39",
+    "bracketSpacing": true
+}

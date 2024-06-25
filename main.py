@@ -28,11 +28,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Montar la carpeta frontend/dist para servir contenido estático
-
-# app.mount("/", StaticFiles(directory="/frontend/dist", html=True), name="static")
-app.mount("/", StaticFiles(directory="/frontend/dist"), name="static")
-
 
 @app.post("/prim")
 async def prim_algorithm(request: Request):
@@ -131,6 +126,18 @@ def get_dijkstra():
             return JSONResponse(content={"message": "index.html not found"}, status_code=404)
     except Exception as e:
         return JSONResponse(content={"message": "Internal Server Error"}, status_code=500)
+
+
+app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="public")
+
+
+@app.get("/{full_path:path}")
+async def catch_all(request: Request, full_path: str):
+    try:
+        index_file_path = os.path.join("frontend", "dist", "index.html")
+        return HTMLResponse(content=open(index_file_path).read(), status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="File not found")
 
 
 if __name__ == "__main__":
