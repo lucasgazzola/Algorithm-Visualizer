@@ -150,4 +150,5 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while building frontend: {e}")
         exit(1)
-    run("main:app", port=int(PORT), log_level="info", reload=True)
+    run("main:app", host="0.0.0.0", port=int(
+        PORT), log_level="info", reload=True)
