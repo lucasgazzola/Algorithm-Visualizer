@@ -15,8 +15,8 @@ from src.classes import Prim, Dijkstra
 algorithms = ["dijkstra", "flujo-maximo", "prim"]
 
 # Si no existe la carpeta frontend/dist, la creamos
-if not os.path.exists("frontend/dist"):
-    os.makedirs("frontend/dist")
+# if not os.path.exists("frontend/dist"):
+#     os.makedirs("frontend/dist")
 
 app = FastAPI()
 
