@@ -55,7 +55,7 @@ export default function Prim() {
           conexiones.map(conexion => (
             <li key={`${conexion[0]}-${conexion[1]}-${conexion[2]}`}>
               <span className="text-lg">
-                {conexion[0]} - {conexion[1]} {'->'} Peso: {conexion[2]}
+                {conexion[0]} - {conexion[1]} {'->'} Valor: {conexion[2]}
                 <button
                   onClick={() =>
                     setConexiones(prevConexiones =>
