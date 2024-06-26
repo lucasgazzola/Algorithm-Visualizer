@@ -2,13 +2,17 @@ import { Dispatch, FormEvent, SetStateAction, useState } from 'react'
 
 type Conexion = [string, string, number]
 type FormAgregarConexionProps = {
+  esDikjstra?: boolean
   setConexiones: Dispatch<SetStateAction<Conexion[]>>
   setAgregando: Dispatch<SetStateAction<boolean>>
+  setNodos?: Dispatch<SetStateAction<Set<string>>>
   className?: string
 }
 
 export default function FormAgregarConexion({
+  esDikjstra = false,
   setConexiones,
+  setNodos,
   setAgregando,
   className,
 }: FormAgregarConexionProps) {
@@ -28,8 +32,12 @@ export default function FormAgregarConexion({
       return
 
     // Antes de almacenar los nodos en el arreglo de conexiones, los ordenmos por orden alfabético en mayúsculas
-    if (upperNodo1 > upperNodo2)
+    if (upperNodo1 > upperNodo2 && !esDikjstra)
       [upperNodo1, upperNodo2] = [upperNodo2, upperNodo1]
+
+    if (setNodos) {
+      setNodos(nodos => new Set([...nodos, upperNodo1, upperNodo2]))
+    }
 
     setConexiones(conexiones => {
       // Chequeamos si ya existe una conexión entre los dos nodos
@@ -68,7 +76,7 @@ export default function FormAgregarConexion({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setConexionData({ ...conexionData, [name]: value })
+    setConexionData({ ...conexionData, [name]: value.toUpperCase() })
   }
 
   return (

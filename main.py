@@ -1,4 +1,3 @@
-import io
 import os
 import subprocess
 from uvicorn import run
@@ -6,11 +5,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-import networkx as nx
-import matplotlib.pyplot as plt
 
 from src.utils import prim, dijkstra, draw_dijkstra, draw_prim
-from src.classes import Prim, Dijkstra
+from src.classes import Prim, Dijkstra, MaxFlow
 
 algorithms = ["dijkstra", "flujo-maximo", "prim"]
 
@@ -54,24 +51,6 @@ async def prim_algorithm(request: Request):
     return FileResponse(filename_path, media_type="image/png")
 
 
-# @app.post("/dijkstra")
-# async def dijkstra_algorithm(request: Request):
-#     body = await request.json()
-#     conexiones = body.get("conexiones")
-#     start = body.get("start")
-#     end = body.get("end")
-#     filename_path = "dijkstra.png"
-
-#     try:
-#         G = Dijkstra(conexiones=conexiones)
-#         distances, parents = dijkstra(G, start)
-#         camino = obtener_camino(parents, end)
-#         draw_dijkstra(G, path=camino, filename=filename_path,
-#                       layout="circular")
-#         return FileResponse(filename_path, media_type="image/png")
-#     except Exception as e:
-#         print(e)
-
 @app.post("/dijkstra")
 async def dijkstra_algorithm(request: Request):
     body = await request.json()
@@ -102,6 +81,26 @@ async def dijkstra_algorithm(request: Request):
     return FileResponse(filename_path, media_type="image/png")
 
 
+@app.post("/flujo-maximo")
+async def max_flow_post(request: Request):
+    body = await request.json()
+    conexiones = body.get("conexiones")
+    start = body.get("start")
+    end = body.get("end")
+    filename_path = "max_flow.png"
+    try:
+        G = MaxFlow(connections=conexiones)
+        max_flow = G.FordFulkerson(start, end)
+        # print(max_flow)
+        G.graficar_grafo_residual(max_flow, filename=filename_path)
+    except ValueError as e:
+        print("Error:", e)
+    if not os.path.exists(filename_path):
+        raise HTTPException(
+            status_code=500, detail="Error al crear la imagen.")
+    return FileResponse(filename_path, media_type="image/png")
+
+
 @app.get("/prim")
 def get_prim():
     try:
@@ -128,6 +127,19 @@ def get_dijkstra():
         return JSONResponse(content={"message": "Internal Server Error"}, status_code=500)
 
 
+@app.get("/flujo-maximo")
+def get_flujo_maximo():
+    try:
+        index_file_path = os.path.join("frontend/dist", "index.html")
+        if os.path.exists(index_file_path):
+            with open(index_file_path, "r") as file:
+                return HTMLResponse(content=file.read(), status_code=200)
+        else:
+            return JSONResponse(content={"message": "index.html not found"}, status_code=404)
+    except Exception as e:
+        return JSONResponse(content={"message": "Internal Server Error"}, status_code=500)
+
+
 app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="public")
 
 
@@ -142,6 +154,8 @@ async def catch_all(request: Request, full_path: str):
 
 if __name__ == "__main__":
     PORT = os.getenv("PORT", 4000)
+    ENV = os.getenv("ENV", "development")
+
     try:
         # subprocess.run(
         #     ["pip", "install", "-r", "requirements.txt"], check=True)
@@ -150,5 +164,9 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while building frontend: {e}")
         exit(1)
-    run("main:app", host="0.0.0.0", port=int(
-        PORT), log_level="info", reload=True)
+    if ENV == "development":
+        run("main:app", host="127.0.0.1", port=int(
+            PORT), log_level="info", reload=True)
+    if ENV == "production":
+        run("main:app", host="0.0.0.0", port=int(
+            PORT), log_level="info", reload=True)
