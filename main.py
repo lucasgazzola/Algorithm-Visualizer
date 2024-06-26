@@ -9,20 +9,19 @@ from fastapi.staticfiles import StaticFiles
 from src.utils import prim, dijkstra, draw_dijkstra, draw_prim
 from src.classes import Prim, Dijkstra, MaxFlow
 
-algorithms = ["dijkstra", "flujo-maximo", "prim"]
-
 # Si no existe la carpeta frontend/dist, la creamos
 if not os.path.exists("frontend/dist"):
     os.makedirs("frontend/dist")
 
 app = FastAPI()
 
+app.add_middleware(CORSMiddleware)
+
 app.add_middleware(
-    CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 
