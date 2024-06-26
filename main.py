@@ -24,11 +24,6 @@ app.add_middleware(
 )
 
 
-@app.options("/")
-def options_handler():
-    return {"methods": ["GET", "POST", "PUT", "DELETE"], "allowed": True}
-
-
 @app.post("/prim")
 async def prim_algorithm(request: Request):
     body = await request.json()
@@ -172,4 +167,4 @@ if __name__ == "__main__":
             PORT), log_level="info", reload=True)
     if ENV == "production":
         run("main:app", host="0.0.0.0", port=int(
-            PORT), log_level="info", reload=True)
+            PORT), log_level="info")
