@@ -146,17 +146,6 @@ export default function FlujoMaximo() {
           </div>
         </div>
       )}
-      <label htmlFor="nodo-inicial">
-        Nodo inicial:
-        <input
-          className="ml-2 my-2 outline-none w-10 text-zinc-950 px-2 py-1"
-          onChange={e => setNodoInicial(e.target.value.toUpperCase())}
-          value={nodoInicial}
-          type="text"
-          name="nodo-inicial"
-          id="nodo-inicial"
-        />
-      </label>
       <StartAndEnd
         setNodoInicial={setNodoInicial}
         setNodoFinal={setNodoFinal}
