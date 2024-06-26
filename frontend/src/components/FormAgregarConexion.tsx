@@ -81,7 +81,7 @@ export default function FormAgregarConexion({
 
   return (
     <form className={className} onSubmit={handleAgregarConexion}>
-      <label htmlFor="nodo1">
+      <label htmlFor="nodo1" title="Nodo inicial">
         Nodo 1:{' '}
         <input
           id="nodo1"
@@ -96,7 +96,7 @@ export default function FormAgregarConexion({
         />
       </label>
 
-      <label htmlFor="nodo2">
+      <label htmlFor="nodo2" title="Nodo final">
         Nodo 2:{' '}
         <input
           id="nodo2"
@@ -110,8 +110,8 @@ export default function FormAgregarConexion({
         />
       </label>
 
-      <label htmlFor="peso">
-        Peso:{' '}
+      <label htmlFor="peso" title="Capacidad, distancia, etc.">
+        Valor:{' '}
         <input
           id="peso"
           name="peso"
@@ -130,12 +130,15 @@ export default function FormAgregarConexion({
         <button
           className="hover:bg-red-800 active:bg-red-900 bg-red-600 h-10 px-2 rounded-sm flex items-center justify-center self-center"
           type="button"
+          title="Cerrar formulario de agregar una nueva ruta"
           onClick={() => setAgregando(false)}>
           <span className="text-xl font-bold">Cerrar</span>
         </button>
 
         <button
+          onClick={handleAgregarConexion}
           className="hover:bg-green-800 active:bg-green-900 bg-green-600 rounded-sm flex items-center justify-center self-center w-10 h-10"
+          title="Agregar nueva ruta"
           type="submit">
           <span className="text-xl font-bold">+</span>
         </button>

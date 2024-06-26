@@ -7,7 +7,8 @@ class MaxFlow:
     def __init__(self, connections):
         self.start = ""
         self.end = ""
-
+        self.nodes = set()
+        self.edges = set()
         self.connections = connections
         self.indice_a_nodo = {}
         self.nodo_a_indice = {}
@@ -16,6 +17,9 @@ class MaxFlow:
 
     '''Returns true if there is a path from source 's' to sink 't' in
     residual graph. Also fills parent[] to store the path '''
+
+    def get_nodes(self):
+        return self.nodes
 
     def BFS(self, s, t, parent):
 
@@ -94,18 +98,19 @@ class MaxFlow:
 
     def construir_graph(self, connections):
         # Extraer nodos únicos
-        nodos = set()
+
         for connection in connections:
-            nodos.add(connection[0])
-            nodos.add(connection[1])
+            self.edges.add((connection[0], connection[1]))
+            self.nodes.add(connection[0])
+            self.nodes.add(connection[1])
 
         # Mapear nodos a índices
-        self.nodo_a_indice = {nodo: i for i, nodo in enumerate(nodos)}
+        self.nodo_a_indice = {nodo: i for i, nodo in enumerate(self.nodes)}
         self.indice_a_nodo = {i: nodo for nodo,
                               i in self.nodo_a_indice.items()}
 
         # Inicializar la matriz de adyacencia
-        n = len(nodos)
+        n = len(self.nodes)
         matriz_adyacencia = [[0] * n for _ in range(n)]
 
         # Llenar la matriz de adyacencia
@@ -123,6 +128,8 @@ class MaxFlow:
                 if val > 0:
                     desde = self.indice_a_nodo[i]
                     hasta = self.indice_a_nodo[j]
+                    G.add_node(desde)
+                    G.add_node(hasta)
                     G.add_edge(desde, hasta, capacity=val)
                     if self.graph[j][i] > 0:
                         G.add_edge(hasta, desde, capacity=self.graph[j][i])
@@ -134,16 +141,16 @@ class MaxFlow:
         pos = nx.spring_layout(G)
         edge_labels = {(u, v): f"""{u}/{v}: {self.graph[self.nodo_a_indice[u]][self.nodo_a_indice[v]]}/{
             self.graph[self.nodo_a_indice[v]][self.nodo_a_indice[u]]}""" for u, v, d in G.edges(data=True)}
-        nx.draw(G, pos, with_labels=True, node_size=700,
-                node_color='skyblue', font_weight='bold')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+        nx.draw_networkx_nodes(G, pos, node_size=700,
+                               node_color="lightblue")
+        nx.draw_networkx_labels(G, pos)
 
-        plt.figure(figsize=(12, 8))
-        nx.draw(G, pos, with_labels=True, node_size=700,
-                node_color='skyblue', font_weight='bold')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+        nx.draw_networkx_edges(
+            G, pos, edgelist=G.edges(), width=2)
         textstr = f"""Flujo máximo desde {self.start} hasta {self.end}: {
             max_flow}"""
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
         plt.gcf().text(0.02, 0.02, textstr, fontsize=12, ha='left')
         plt.savefig(filename)
         plt.clf()

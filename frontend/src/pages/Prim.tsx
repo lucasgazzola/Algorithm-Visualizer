@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import FormAgregarConexion from '../components/FormAgregarConexion'
 import { BASE_URL } from '../constants'
+import BotonAgregarConexion from '../components/BotonAgregarConexion'
 
 type Conexion = [string, string, number]
 
@@ -10,10 +11,6 @@ export default function Prim() {
   const [agregando, setAgregando] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [pngUrl, setPngUrl] = useState('')
-
-  const handleAgregarConexion = () => {
-    setAgregando(true)
-  }
 
   const handleDownload = () => {
     if (!pngUrl) return
@@ -48,7 +45,7 @@ export default function Prim() {
   }
 
   return (
-    <div className="flex flex-col items-center flex-1">
+    <div className="flex flex-col gap-2 items-center flex-1">
       <h1 className="text-4xl mb-2 font-bold text-blue-800 dark:text-cyan-200">
         PRIM
       </h1>
@@ -83,16 +80,9 @@ export default function Prim() {
           setConexiones={setConexiones}
         />
       )}
-      {!agregando && (
-        <button
-          onClick={handleAgregarConexion}
-          className="p-2 text-xl font-bold hover:bg-blue-800 active:bg-blue-900 bg-blue-600"
-          type="button">
-          <span>Nueva</span>
-        </button>
-      )}
+      {!agregando && <BotonAgregarConexion setAgregando={setAgregando} />}
       {isModalOpen && (
-        <div className="bg-zinc-800 opacity-95 z-10 absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
+        <div className="absolute bg-zinc-800 opacity-95 z-10 top-0 left-0 flex flex-col items-center justify-center w-full h-full">
           <div className="relative flex flex-col gap-5 justify-center items-center h-full w-full">
             <div className="relative">
               <img src={pngUrl} className="w-full" />
@@ -131,7 +121,7 @@ export default function Prim() {
           </div>
         </div>
       )}
-      <div className="mt-auto flex flex-col gap-2">
+      <div className={`flex flex-col gap-2 ${agregando && 'mt-auto'}`}>
         <button
           onClick={() => setConexiones([])}
           className="p-2 text-xl font-bold hover:bg-red-800 active:bg-red-900 bg-red-600"
