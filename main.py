@@ -24,6 +24,11 @@ app.add_middleware(
 )
 
 
+@app.options("/")
+def options_handler():
+    return {"methods": ["GET", "POST", "PUT", "DELETE"], "allowed": True}
+
+
 @app.post("/prim")
 async def prim_algorithm(request: Request):
     body = await request.json()
