@@ -1,5 +1,11 @@
+# Node python
 /venv
 /__pycache__
-/node_modules
 */**/__pycache__
+
+# Node files
+/node_modules
 */**/node_modules
+
+# Images
+/*.png
