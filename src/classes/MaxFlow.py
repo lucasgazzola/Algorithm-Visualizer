@@ -94,7 +94,7 @@ class MaxFlow:
                 self.graph[v][u] += path_flow
                 v = parent[v]
 
-            return max_flow
+        return max_flow
 
     def construir_graph(self, connections):
         # Extraer nodos únicos
